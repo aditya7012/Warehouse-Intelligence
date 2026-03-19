@@ -1,57 +1,144 @@
-# ZeptoDark — Deployment Guide
+## 📌 Overview
 
-## Local Setup
+I built an AI-powered operations intelligence system designed for quick-commerce dark stores to solve demand unpredictability, frequent stockouts, and inefficient delivery planning.
 
-```bash
-pip install -r requirements.txt
+The system predicts SKU-level demand, recommends inventory restocking, and estimates delivery partner requirements using historical order data across cities, stores, and products.
 
-# Put train.csv in the same folder as dashboard.py, then:
-streamlit run dashboard.py
+---
+
+## 🚨 Problem
+
+Quick commerce platforms like Zepto and Blinkit operate under extreme time constraints where:
+
+- Stockouts directly lead to lost revenue
+- Demand fluctuates heavily across weekends and festivals
+- Delivery partner allocation is often reactive, not predictive
+
+Operations teams lack a unified system to make **data-driven daily decisions**.
+
+---
+
+## 👤 Users
+
+- Dark Store Managers → Inventory decisions
+- City Operations Teams → Delivery planning
+- Supply Chain Teams → Restocking strategy
+
+---
+
+## 💡 Key Insight
+
+Demand is not random — it follows predictable patterns:
+
+- 📈 Weekend demand spikes
+- 🎉 Festival-driven surges
+- 📍 Store-level demand variation
+
+This means demand can be **predicted and operationalized**.
+
+---
+
+## 🛠️ Solution
+
+I designed a 4-layer intelligence system:
+
+### 1. Demand Forecasting
+
+Predicts future SKU demand using historical order patterns.
+
+### 2. Inventory Recommendation
+
+Calculates restock quantity using:
+
+- Predicted demand
+- Current stock
+- Safety buffer
+
+### 3. Delivery Planning
+
+Estimates required delivery partners based on expected order volume.
+
+### 4. Demand Surge Detection
+
+Identifies abnormal spikes (weekends/festivals) to prevent operational overload.
+
+---
+
+## ⚙️ Product Logic
+
+### Restock Formula
+
+```
+Restock = Predicted Demand + Safety Stock - Current Inventory
 ```
 
-## Deploy to Streamlit Community Cloud (Free — Recommended)
+### Delivery Planning
 
-1. Push your files to a **public GitHub repo**:
-   ```
-   your-repo/
-   ├── dashboard.py
-   ├── requirements.txt
-   └── train.csv          ← include the data file
-   ```
+```
+Delivery Partners Needed = Total Orders / Orders per Rider
+```
 
-2. Go to **https://share.streamlit.io** → "New app"
+### Surge Detection
 
-3. Connect your GitHub repo, set:
-   - **Main file path:** `dashboard.py`
-   - **Python version:** 3.11
-
-4. Click **Deploy** — live URL in ~2 minutes.
+```
+If Weekend Demand > 1.2 × Weekday Demand → Surge Triggered
+```
 
 ---
 
-## Data Note
-
-The dashboard works with either:
-
-| File | Columns |
-|---|---|
-| `zepto_darkstore_orders.csv` | `date, city, dark_store_id, category, product_name, orders, stock_remaining` |
-| `train.csv` (Kaggle) | `date, store, item, sales` (auto-mapped by the app) |
+### 📊 Metrics
 
 ---
 
-## UI Improvements Made
+### **Model / Prediction Metrics:**
 
-| Area | Before | After |
-|---|---|---|
-| Theme | Streamlit default white | Dark industrial (#0d0f14) |
-| Typography | System fonts | Space Mono + DM Sans |
-| KPI cards | Basic `st.metric` | Styled cards with hover border |
-| Store-level KPIs | 2 metrics | 4 metrics (+ 7-day orders, avg daily) |
-| Forecast chart | Orders only | Actual + 3-day forecast overlay |
-| Restock table | Basic dataframe | + Category, Days of Cover, Risk column |
-| Layout | Full width single column | Responsive 2 & 4-column grids |
-| Sidebar | Raw widgets | Labelled, grouped, branded |
-| Page config | Missing | Title, icon, wide layout |
-| Data loading | No caching | `@st.cache_data` for speed |
-| Error handling | Crashes if file missing | Graceful fallback + st.stop() |
+- Demand forecast accuracy (MAPE / % error)
+- Stockout prediction accuracy
+- Demand surge detection precision
+
+### **Product Metrics:**
+
+- % of SKUs with automated restock recommendations
+- % of demand spikes detected before occurrence
+- Delivery partner allocation accuracy
+
+### **Business Metrics:**
+
+- Stockout rate reduction (~35% simulated)
+- Increase in in-stock availability (%)
+- Reduction in lost orders due to stockouts
+
+### **Operational Efficiency Metrics:**
+
+- Reduction in inventory planning time
+- Improvement in rider utilization (%)
+- Reduction in emergency restocking events
+
+---
+
+## 🧪 Trade-offs & Decisions
+
+| Decision | Reason |
+| --- | --- |
+| Random Forest for forecasting | Handles non-linear demand patterns |
+| Safety stock buffer | Reduces risk of stockouts |
+| SKU + Store views | Different decision layers |
+| Rule-based surge detection | Simple + interpretable |
+
+---
+
+## 📉 Limitations
+
+- No real-time data ingestion
+- Does not include external signals (weather, pricing, promos)
+- Forecasting can be improved using time-series models
+
+---
+
+## 🚀 Future Improvements
+
+- Real-time inventory sync
+- Dynamic pricing integration
+- Supplier-side automation
+- Advanced ML models (ARIMA, LSTM)
+- Store expansion optimization model
